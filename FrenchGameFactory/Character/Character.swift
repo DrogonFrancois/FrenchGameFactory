@@ -11,6 +11,7 @@ class Character {
     let characterType: String // Type du personnage
     var name: String // Type du personnage
     var lifePoint: Int // Type du personnage
+    let maxLifePoint: Int // Points de vie maximum du personnage
     let weapon: Weapon // Arme du personnage
     
     // Initialisation de la classe Character
@@ -19,6 +20,7 @@ class Character {
         self.characterType = characterType
         self.name = name
         self.lifePoint = lifePoint
+        self.maxLifePoint = lifePoint
         self.weapon = weapon
     }
     
