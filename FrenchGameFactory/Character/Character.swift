@@ -8,11 +8,11 @@
 import Foundation
 
 class Character {
-    let characterType: String // Type du personnage
-    var name: String // Type du personnage
-    var lifePoint: Int // Type du personnage
-    let maxLifePoint: Int // Points de vie maximum du personnage
-    let weapon: Weapon // Arme du personnage
+    let characterType: String
+    var name: String // Name of the character
+    var lifePoint: Int
+    let maxLifePoint: Int // Maximum's life point. Eg. 50/200
+    let weapon: Weapon // Character's Weapon
     
     // Initialisation de la classe Character
     
@@ -24,10 +24,12 @@ class Character {
         self.weapon = weapon
     }
     
-    // Méthode pour obtenir une description du personnage
+    // Character's description
     
     func getDescription() -> String {
         return "\(characterType) possède \(lifePoint) points de vie. Son arme est : \(weapon.description). Cette arme provoque \(weapon.damage) points de dégâts."
     }
 }
+
+    
 

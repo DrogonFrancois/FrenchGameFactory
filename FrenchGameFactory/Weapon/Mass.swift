@@ -13,3 +13,4 @@ class Mass: Weapon {
         super.init(damage: 100, description: "Masse de Troll")
     }
 }
+

@@ -11,10 +11,10 @@ class Weapon {
     var damage: Int // Degat infligé par l'arme
     var description: String // Description de l'arme
     
-    // Initialisateur de la classe Weapon
+// Initialisateur de la classe Weapon
     
     init(damage: Int, description: String) {
-        self.damage = damage
-        self.description = description
+            self.damage = damage
+            self.description = description
     }
 }

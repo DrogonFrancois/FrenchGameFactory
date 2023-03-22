@@ -10,6 +10,7 @@ import Foundation
 class Sword: Weapon {
     
     init() {
-        super.init(damage: 80, description: "Épée de Deuillegivre")
+        super.init(damage: 50, description: "Épée de chevalier")
     }
 }
+
