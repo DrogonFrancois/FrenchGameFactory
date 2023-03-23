@@ -1,3 +1,4 @@
+//
 //  Game.swift
 //  FrenchGameFactory
 //
@@ -10,7 +11,7 @@ class Game {
     var maxCharacters = 3
     var turnCounter = 0
     
-    // DEMARRAGE DU JEUX //
+    // STARTING THE GAME //
     
     func start() {
         print("FrenchFactoryGame \n")
@@ -19,16 +20,16 @@ class Game {
         showStatistics()
     }
     
-    // Creation des Joueurs //
+    // Player Creation //
     
     private func createPlayers() {
         
-        // Création tu nombre de Joueurs ( ici 2)  //
+        // Create the number of players (here 2) //
         
         for i in 1...2 {
             print("\nBonjour Joueur \(i), quel est le nom de l'équipe que vous avez choisi ?")
             
-            // verification si leurs nom est unique //
+            // check if their name is unique //
             
             var name = ""
             var nameIsUnique = false
@@ -45,8 +46,7 @@ class Game {
             
             print("\nHello \(name) !\n")
             
-            // Creation des personnage du Joueur ( nom de chaque classe) //
-            
+            // Creation of the player's character (name of each class) //
             var characters = [Character]()
             var selectedCharactersIndices = Set<Int>()
             
@@ -54,12 +54,12 @@ class Game {
                 let charactersToSelect = [Dwarf(), Magus(), Colossus(), Warrior()]
                 print("Veuillez choisir le combattant numéro \(index)")
                 
-                // Affichage des personnages disponibles //
+                // Display of available characters //
                 for (index, character) in charactersToSelect.enumerated() {
                     print("\(index + 1). \(character.getDescription())")
                 }
                 
-                // Sélection d'un personnage //
+                // Select a character //
                 
                 var selectedCharacter: Character?
                 repeat {
@@ -72,7 +72,7 @@ class Game {
                         }
                     } else {
                         
-                        // Attribution d'un nom au personnage sélectionné //
+                        // Assign a name to the selected character //
                         
                         print("Entrez un nombre valide pour sélectionner un combattant:")
                     }
@@ -101,20 +101,20 @@ class Game {
                         print("Le nom existe déjà, veuillez recommencer:")
                     }
                 }
-                // Ajout du personnage à la liste des personnages du joueur//
+                // Add the character to the player's character list//
                 
                 selectedCharacter.name = characterName
                 characters.append(selectedCharacter)
             }
             
-            // Creation du joueur avec ses personnages //
+            // Creation of the player with his characters //
             
             let player = Player(name: name, characters: characters)
             players.append(player)
         }
     }
     
-    // Bataille entre les joueurs //
+    // Battle between the players //
     
     private func startBattle() {
         print("La bataille commence !")
@@ -128,12 +128,12 @@ class Game {
             
             print("\nAu tour de (\(playerWhoAttack.name)):")
             
-            // Sélection du personnage attaquant //
+            // Selection of the attacking character //
             
             let attacker = selectCharacter(from: playerWhoAttack)
             var shouldHeal = false
             
-            // Vérification si le personnage attaquant est un Magus et demande si le joueur veut soigner un allié //
+            // Check if the attacking character is a Magus and ask if the player wants to heal an ally //
             
             if attacker is Magus {
                 if canHealCharacter(in: playerWhoAttack) {
@@ -146,12 +146,12 @@ class Game {
                 }
             }
             
-            // Sélection de la cible //
+            // Target selection //
             
             print("Choisissez un combattant \(shouldHeal ? "à soigner" : "à attaquer"):")
             let target = selectTarget(from: shouldHeal ? playerWhoAttack : attacked, shouldHeal: shouldHeal)
             
-            // Exécution de l'attaque ou du soin //
+            // Execution of the attack or treatment //
             
             performAttack(attacker: attacker, target: target, shouldHeal: shouldHeal)
             
@@ -165,14 +165,14 @@ class Game {
         }
     }
     
-    // Selectionne de attaquent pour un joueur //
+    // Select an attacker for a player //
     
     func selectCharacter(from player: Player) -> Character {
         print("Choisissez un combattant pour attaquer:")
         for (index, character) in player.characters.enumerated() {
             print("\(index + 1). \(character.name) - \(character.getDescription())")
         }
-        // Vérification de la validité de la sélection//
+        // Checking the validity of the selection//
         
         var selectedCharacterIndex: Int?
         repeat {
@@ -193,7 +193,7 @@ class Game {
         return player.characters[selectedCharacterIndex!]
     }
     
-    // Selectionne une cible a attaquer ou a soignée pour un joueur //
+    // Selects a target for a player to attack or heal //
     
     private func selectTarget(from player: Player, shouldHeal: Bool) -> Character {
         for (index, character) in player.characters.enumerated() {
@@ -227,7 +227,7 @@ class Game {
         return player.characters[selectedTargetIndex!]
     }
     
-    // verification si la partie est terminée //
+    // check if the game is over //
     
     func isGameOver() -> Bool {
         for player in players {
@@ -238,7 +238,7 @@ class Game {
         return false
     }
     
-    // Effectue une attaque ou le soin sur un cible //
+    // Performs an attack or healing on a target //
     
     private func performAttack(attacker: Character, target: Character, shouldHeal: Bool) {
         if let magus = attacker as? Magus, shouldHeal {
@@ -261,7 +261,7 @@ class Game {
         }
     }
     
-    // affiche les statistique finales //
+    // displays the final statistics //
     
     func showStatistics() {
         let winnerIndex = players[0].characters.allSatisfy({ $0.lifePoint <= 0 }) ? 1 : 0
