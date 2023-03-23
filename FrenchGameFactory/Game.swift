@@ -48,7 +48,7 @@ class Game {
             // Creation des personnage du Joueur ( nom de chaque classe) //
             
             var characters = [Character]()
-            var selectedCharactersIndices = Set<Int>() // Ajouter cette ligne
+            var selectedCharactersIndices = Set<Int>()
             
             for index in 1...3 {
                 let charactersToSelect = [Dwarf(), Magus(), Colossus(), Warrior()]
@@ -60,17 +60,20 @@ class Game {
                 }
                 
                 // Sélection d'un personnage //
+                
                 var selectedCharacter: Character?
                 repeat {
                     if let selectedIndex = readLine(), let indexToVerified = Int(selectedIndex), indexToVerified > 0, indexToVerified <= charactersToSelect.count {
-                        if !selectedCharactersIndices.contains(indexToVerified - 1) { // Ajouter cette condition
+                        if !selectedCharactersIndices.contains(indexToVerified - 1) {
                             selectedCharacter = charactersToSelect[indexToVerified - 1]
-                            selectedCharactersIndices.insert(indexToVerified - 1) // Ajouter cette ligne
+                            selectedCharactersIndices.insert(indexToVerified - 1)
                         } else {
                             print("Vous avez déjà choisi ce combattant. Veuillez en choisir un autre :")
                         }
                     } else {
+                        
                         // Attribution d'un nom au personnage sélectionné //
+                        
                         print("Entrez un nombre valide pour sélectionner un combattant:")
                     }
                 } while selectedCharacter == nil
@@ -99,6 +102,7 @@ class Game {
                     }
                 }
                 // Ajout du personnage à la liste des personnages du joueur//
+                
                 selectedCharacter.name = characterName
                 characters.append(selectedCharacter)
             }
@@ -111,6 +115,7 @@ class Game {
     }
     
     // Bataille entre les joueurs //
+    
     private func startBattle() {
         print("La bataille commence !")
         
@@ -124,6 +129,7 @@ class Game {
             print("\nAu tour de (\(playerWhoAttack.name)):")
             
             // Sélection du personnage attaquant //
+            
             let attacker = selectCharacter(from: playerWhoAttack)
             var shouldHeal = false
             
@@ -139,14 +145,14 @@ class Game {
                     print("Votre équipe n'a pas besoin de soins.")
                 }
             }
-
-            
             
             // Sélection de la cible //
+            
             print("Choisissez un combattant \(shouldHeal ? "à soigner" : "à attaquer"):")
             let target = selectTarget(from: shouldHeal ? playerWhoAttack : attacked, shouldHeal: shouldHeal)
             
             // Exécution de l'attaque ou du soin //
+            
             performAttack(attacker: attacker, target: target, shouldHeal: shouldHeal)
             
             swap(&playerWhoAttack, &attacked)
@@ -156,7 +162,6 @@ class Game {
                     character.lifePoint < character.maxLifePoint
                 }
             }
-
         }
     }
     
@@ -168,6 +173,7 @@ class Game {
             print("\(index + 1). \(character.name) - \(character.getDescription())")
         }
         // Vérification de la validité de la sélection//
+        
         var selectedCharacterIndex: Int?
         repeat {
             if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= player.characters.count {
@@ -186,9 +192,6 @@ class Game {
         
         return player.characters[selectedCharacterIndex!]
     }
-    
-    
-    
     
     // Selectionne une cible a attaquer ou a soignée pour un joueur //
     
@@ -256,41 +259,24 @@ class Game {
                 print("\(target.name) est éliminé!")
             }
         }
-        
     }
     
     // affiche les statistique finales //
+    
     func showStatistics() {
         let winnerIndex = players[0].characters.allSatisfy({ $0.lifePoint <= 0 }) ? 1 : 0
         print("\nFélicitations, équipe \(winnerIndex + 1) (\(players[winnerIndex].name))! Vous avez gagné la partie!")
         
         print("\nStatistiques finales:")
-        print("Nombre de tours effectués : \(turnCounter)") // Ajoutez cette ligne pour afficher le nombre de tours effectués
-
+        print("Nombre de tours effectués : \(turnCounter)")
+        
         for (index, player) in players.enumerated() {
             print("\nJoueur \(index + 1): \(player.name)")
             for character in player.characters {
-                // Modifiez cette ligne pour inclure les points de vie actuels du personnage
+                
                 print("\(character.name) - \(character.getDescription()) - Points de vie : \(character.lifePoint)")
             }
         }
-
-        
     }
-    
-//    func showStatistics() {
-//        print("\nStatistiques finales:")
-//        for (index, player) in players.enumerated() {
-//            print("\nJoueur \(index + 1): \(player.name)")
-//            for character in player.characters {
-//                print("\(character.name) - \(character.getDescription())")
-//            }
-//        }
-//
-//
-//        let winnerIndex = players[0].characters.allSatisfy({ $0.lifePoint <= 0 }) ? 1 : 0
-//        print("\nFélicitations, Joueur \(winnerIndex + 1) (\(players[winnerIndex].name))! Vous avez gagné la partie!")
-//    }
-    
 }
 

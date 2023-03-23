@@ -9,12 +9,10 @@ import Foundation
 
 class Character {
     let characterType: String
-    var name: String // Name of the character
+    var name: String
     var lifePoint: Int
-    let maxLifePoint: Int // Maximum's life point. Eg. 50/200
-    let weapon: Weapon // Character's Weapon
-    
-    // Initialisation de la classe Character
+    let maxLifePoint: Int
+    let weapon: Weapon
     
     init(characterType: String, name: String, lifePoint: Int, weapon: Weapon) {
         self.characterType = characterType
@@ -23,8 +21,6 @@ class Character {
         self.maxLifePoint = lifePoint
         self.weapon = weapon
     }
-    
-    // Character's description
     
     func getDescription() -> String {
         return "\(characterType) possède \(lifePoint) points de vie. Son arme est : \(weapon.description). Cette arme provoque \(weapon.damage) points de dégâts."
