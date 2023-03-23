@@ -8,10 +8,9 @@
 import Foundation
 
 class Player {
-    var name: String // nom du joueur
-    var characters: [Character] // Les personnage du joueur sous forme de tableau
+    var name: String 
+    var characters: [Character]
     
-    // Initialisation de la classe Player
     
     init(name: String, characters: [Character]) {
         self.name = name
