@@ -22,6 +22,16 @@ class Character {
         self.weapon = weapon
     }
     
+    func attack(character: Character) {
+        let damage = weapon.damage
+        character.lifePoint -= damage
+        print("\(name) attaque \(character.name) et inflige \(damage) points de dégâts.")
+        if character.lifePoint <= 0 {
+            character.lifePoint = 0
+            print("\(character.name) est éliminé!")
+        }
+    }
+    
     func getDescription() -> String {
         return "\(characterType) possède \(lifePoint) points de vie. Son arme est : \(weapon.description). Cette arme provoque \(weapon.damage) points de dégâts."
     }

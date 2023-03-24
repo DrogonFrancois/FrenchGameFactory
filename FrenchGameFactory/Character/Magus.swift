@@ -22,8 +22,4 @@ class Magus: Character {
         }
         print("\(name) a soigné \(target.name) pour \(healingPower) points de vie.")
     }
-    
 }
-
-
-
