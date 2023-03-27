@@ -122,7 +122,6 @@ class Game {
     
     // MARK: - Start Battle
     // Battle between the players //
-    
     private func startBattle() {
         print("La bataille commence !")
         
@@ -134,30 +133,36 @@ class Game {
             print("\nTour \(turnCounter)")
             
             print("\nAu tour de (\(playerWhoAttack.name)):")
-            
+            print("Choisissez un combattant pour attaquer")
             // Selection of the attacking character //
             
             let attacker = getCharacter(from: playerWhoAttack)
             
+            
             // Check if the attacking character is a Magus and ask if the player wants to heal an ally //
             let canHealCharacter = playerWhoAttack.characters.contains { character in
-                character.lifePoint < character.maxLifePoint
+                character.lifePoint < character.maxLifePoint && character.lifePoint > 0
             }
             
             if let magus = attacker as? Magus, canHealCharacter {
                 print("\(attacker.name) est un Magus. Voulez-vous soigner un combattant de votre équipe? (o/n)")
                 
                 if let input = readLine(), input.lowercased() == "o" {
-                    print("Choisissez un combattant à soigner :")
-                    let characterToHeal = getCharacter(from: playerWhoAttack, toHeal: true)
+                    var characterToHeal: Character
+                    repeat {
+                        print("Choisissez un combattant à soigner :")
+                        characterToHeal = getCharacter(from: playerWhoAttack, toHeal: true)
+                        if characterToHeal.lifePoint >= characterToHeal.maxLifePoint {
+                            print("Ce combattant a déjà tous ses points de vie ou est éliminé. Veuillez en choisir un autre:")
+                        }
+                    } while characterToHeal.lifePoint >= characterToHeal.maxLifePoint
+                    
                     magus.heal(target: characterToHeal)
                     
                     swap(&playerWhoAttack, &attacked)
                     continue
                 }
             }
-            
-            // Target selection //
             
             print("Choisissez un combattant à attaquer")
             let target = getCharacter(from: attacked)
@@ -184,7 +189,7 @@ class Game {
             print("\nJoueur \(index + 1): \(player.name)")
             for character in player.characters {
                 
-                print("\(character.name) - \(character.getDescription()) - Points de vie : \(character.lifePoint)")
+                print("\(character.name) - \(character.getDescription())")
             }
         }
     }
@@ -205,7 +210,8 @@ extension Game {
             if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= player.characters.count {
                 let characterIndex = inputNumber - 1
                 if toHeal {
-                    if player.characters[characterIndex].lifePoint < player.characters[characterIndex].maxLifePoint {
+                    
+                    if player.characters[characterIndex].lifePoint < player.characters[characterIndex].maxLifePoint && player.characters[characterIndex].lifePoint > 0 {
                         selectedTargetIndex = characterIndex
                     } else {
                         print("Ce combatant a déjà tous ses points de vie. Veuillez en choisir un autre:")

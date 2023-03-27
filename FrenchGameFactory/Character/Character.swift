@@ -36,6 +36,5 @@ class Character {
         return "\(characterType) possède \(lifePoint) points de vie. Son arme est : \(weapon.description). Cette arme provoque \(weapon.damage) points de dégâts."
     }
 }
-
     
 
