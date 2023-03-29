@@ -199,38 +199,30 @@ class Game {
 
 extension Game {
     // Select a character depending of the player - toHeal or not //
-    
     private func getCharacter(from player: Player, toHeal: Bool = false) -> Character {
-        for (index, character) in player.characters.enumerated() {
+        var availableCharacters = player.characters.filter({ $0.lifePoint > 0 })
+        
+        if toHeal {
+            availableCharacters = availableCharacters.filter({ $0.lifePoint < $0.maxLifePoint })
+        }
+        
+        for (index, character) in availableCharacters.enumerated() {
             print("\(index + 1). \(character.name) - \(character.getDescription())")
         }
         
         var selectedTargetIndex: Int?
         repeat {
-            if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= player.characters.count {
+            if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= availableCharacters.count {
                 let characterIndex = inputNumber - 1
-                if toHeal {
-                    
-                    if player.characters[characterIndex].lifePoint < player.characters[characterIndex].maxLifePoint && player.characters[characterIndex].lifePoint > 0 {
-                        selectedTargetIndex = characterIndex
-                    } else {
-                        print("Ce combatant a déjà tous ses points de vie. Veuillez en choisir un autre:")
-                    }
-                } else {
-                    if player.characters[characterIndex].lifePoint > 0 {
-                        selectedTargetIndex = characterIndex
-                    } else {
-                        print("Ce combatant est éliminé. Veuillez en choisir un autre:")
-                    }
-                }
+                selectedTargetIndex = characterIndex
             } else {
                 print("Entrez un nombre valide pour sélectionner un combattant:")
             }
         } while selectedTargetIndex == nil
         
-        return player.characters[selectedTargetIndex!]
+        return availableCharacters[selectedTargetIndex!]
     }
-    
+
     // check if the game is over //
     
     private func isGameOver() -> Bool {
