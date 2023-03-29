@@ -8,24 +8,33 @@
 import Foundation
 
 class Character {
-    let characterType: String // Type du personnage
-    var name: String // Type du personnage
-    var lifePoint: Int // Type du personnage
-    let weapon: Weapon // Arme du personnage
-    
-    // Initialisation de la classe Character
+    let characterType: String
+    var name: String
+    var lifePoint: Int
+    let maxLifePoint: Int
+    let weapon: Weapon
     
     init(characterType: String, name: String, lifePoint: Int, weapon: Weapon) {
         self.characterType = characterType
         self.name = name
         self.lifePoint = lifePoint
+        self.maxLifePoint = lifePoint
         self.weapon = weapon
     }
     
-    // Méthode pour obtenir une description du personnage
+    func attack(character: Character) {
+        let damage = weapon.damage
+        character.lifePoint -= damage
+        print("\(name) attaque \(character.name) et inflige \(damage) points de dégâts.")
+        if character.lifePoint <= 0 {
+            character.lifePoint = 0
+            print("\(character.name) est éliminé!")
+        }
+    }
     
     func getDescription() -> String {
         return "\(characterType) possède \(lifePoint) points de vie. Son arme est : \(weapon.description). Cette arme provoque \(weapon.damage) points de dégâts."
     }
 }
+    
 

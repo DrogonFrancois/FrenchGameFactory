@@ -49,6 +49,7 @@
 		0F4ED51E29BA7981004B4B7A /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
 		0F4ED52029BA7B60004B4B7A /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		0F4ED52229BA8040004B4B7A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		0F687BF529D1F3190075C971 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +85,7 @@
 				0F4ED50529BA743C004B4B7A /* main.swift */,
 				0F4ED52029BA7B60004B4B7A /* Game.swift */,
 				0F4ED52229BA8040004B4B7A /* Player.swift */,
+				0F687BF529D1F3190075C971 /* README.md */,
 				0F4ED52429BA8463004B4B7A /* Character */,
 				0F4ED52529BA8490004B4B7A /* Weapon */,
 			);

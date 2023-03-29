@@ -7,172 +7,224 @@
 import Foundation
 
 class Game {
-    var players = [Player]()
-    var maxCharacters = 3
-
-// DEMARRAGE DU JEUX //
-
+    
+    // MAJ + CTRL = Sélection multiple (curseurs)
+    private var players = [Player]()
+    private var maxCharacters = 3
+    private var turnCounter = 0
+    
+    // STARTING THE GAME //
+    
     func start() {
         print("FrenchFactoryGame \n")
         createPlayers()
         startBattle()
         showStatistics()
     }
-// Creation des Joueurs //
+    
+    // MARK: - Create Players
     
     private func createPlayers() {
         
-// Création tu nombre de Joueurs ( ici 2)  //
+        // Create the number of players (here 2) //
         
         for i in 1...2 {
-            print("\nBonjour Joueur \(i), quel est le nom du personnage que vous avez choisi ?")
+            print("\nBonjour Joueur \(i), quel est le nom de l'équipe que vous avez choisi ?")
             
-// verification si leurs nom est unique //
+            // check if their name is unique //
             
             var name = ""
             var nameIsUnique = false
-
+            
             while !nameIsUnique || name.isEmpty {
                 name = readLine() ?? ""
                 name = name.capitalized.trimmingCharacters(in: .whitespacesAndNewlines)
                 nameIsUnique = !players.contains(where: { $0.name == name })
+                
+                if name.isEmpty {
+                    print("Le nom de l'équipe ne peut être vide, veuillez commencer:")
+                }
+                
+                if !nameIsUnique {
+                    print("Ce nom de cette équipe existe déjà, veuillez en choisir un autre :")
+                }
             }
-
+            
             print("\nHello \(name) !\n")
             
-// Creation des personnage du Joueur ( nom de chaque classe) //
-            
-            
+            // Creation of the player's character (name of each class) //
             var characters = [Character]()
-
+            var selectedCharactersIndices = Set<Int>()
+            
             for index in 1...3 {
                 let charactersToSelect = [Dwarf(), Magus(), Colossus(), Warrior()]
-
-                print("Veuillez choisir le personnage numéro \(index)")
-
+                print("Veuillez choisir le combattant numéro \(index)")
+                
+                // Display of available characters //
                 for (index, character) in charactersToSelect.enumerated() {
                     print("\(index + 1). \(character.getDescription())")
                 }
                 
-// Selectionner un Personnage //
-
+                // Select a character //
+                
                 var selectedCharacter: Character?
                 repeat {
                     if let selectedIndex = readLine(), let indexToVerified = Int(selectedIndex), indexToVerified > 0, indexToVerified <= charactersToSelect.count {
-                        selectedCharacter = charactersToSelect[indexToVerified - 1]
+                        if !selectedCharactersIndices.contains(indexToVerified - 1) {
+                            selectedCharacter = charactersToSelect[indexToVerified - 1]
+                            selectedCharactersIndices.insert(indexToVerified - 1)
+                        } else {
+                            print("Vous avez déjà choisi ce combattant. Veuillez en choisir un autre :")
+                        }
                     } else {
-                        print("Entrez un nombre valide pour sélectionner un personnage:")
+                        
+                        // Assign a name to the selected character //
+                        
+                        print("Entrez un nombre valide pour sélectionner un combattant:")
                     }
                 } while selectedCharacter == nil
                 
-// Donne un nom au personnage sélectionné //
-
-                print("Vous avez choisi \(selectedCharacter!.characterType). Veuillez lui donner un nom:")
-
+                guard let selectedCharacter else { return }
+                
+                print("Vous avez choisi \(selectedCharacter.characterType). Veuillez lui donner un nom:")
+                
                 var characterName = ""
                 var nameIsUnique = false
-
+                
                 while !nameIsUnique || characterName.isEmpty {
                     characterName = (readLine() ?? "").capitalized
-
-                    nameIsUnique = !players.contains(where: { player in
+                    
+                    let nameIsUniqueAmongMyCharacters = !characters.contains(where: { $0.name == characterName })
+                    let nameIsUniqueAmongOtherPlayersCharacters = !players.contains(where: { player in
                         player.characters.contains(where: { $0.name == characterName })
                     })
-
+                    
+                    nameIsUnique = nameIsUniqueAmongMyCharacters && nameIsUniqueAmongOtherPlayersCharacters
+                    
                     if characterName.isEmpty {
                         print("Vous n'avez pas donné de nom. Veuillez en donner un:")
                     } else if !nameIsUnique {
                         print("Le nom existe déjà, veuillez recommencer:")
                     }
                 }
-
-                selectedCharacter!.name = characterName
-                characters.append(selectedCharacter!)
+                // Add the character to the player's character list//
+                
+                selectedCharacter.name = characterName
+                characters.append(selectedCharacter)
             }
-// Creation du joueur avec ses personnages //
+            
+            // Creation of the player with his characters //
             
             let player = Player(name: name, characters: characters)
             players.append(player)
         }
     }
     
-// Commence la bataille entre les joueurs //
-
-    func startBattle() {
-        var currentPlayerIndex = 0
+    // MARK: - Start Battle
+    // Battle between the players //
+    private func startBattle() {
+        print("La bataille commence !")
+        
+        var playerWhoAttack = players[0]
+        var attacked = players[1]
+        
         while !isGameOver() {
-            let currentPlayer = players[currentPlayerIndex]
-            let opponentPlayer = players[1 - currentPlayerIndex]
-            print("\n\(currentPlayer.name), c'est à votre tour de jouer !")
-            let attacker = selectAttacker(for: currentPlayer)
-            let target = selectTarget(for: opponentPlayer)
-            performAttack(attacker: attacker, target: target)
-            currentPlayerIndex = 1 - currentPlayerIndex
-        }
-        showStatistics()
-    }
-    
-// Selectionne l'attaquent pour un joueur //
-
-    private func selectAttacker(for player: Player) -> Character {
-        print("\(player.name), choisissez un personnage pour attaquer:")
-        for (index, character) in player.characters.enumerated() {
-            if character.lifePoint > 0 {
-                print("\(index + 1). \(character.name) - \(character.getDescription())")
+            turnCounter += 1
+            print("\nTour \(turnCounter)")
+            
+            print("\nAu tour de (\(playerWhoAttack.name)):")
+            print("Choisissez un combattant pour attaquer")
+            // Selection of the attacking character //
+            
+            let attacker = getCharacter(from: playerWhoAttack)
+            
+            
+            // Check if the attacking character is a Magus and ask if the player wants to heal an ally //
+            let canHealCharacter = playerWhoAttack.characters.contains { character in
+                character.lifePoint < character.maxLifePoint && character.lifePoint > 0
             }
-        }
-        
-// Selectionne un personnage Attaquant //
-
-        var selectedAttackerIndex: Int?
-        repeat {
-            if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= player.characters.count {
-                let characterIndex = inputNumber - 1
-                if player.characters[characterIndex].lifePoint > 0 {
-                    selectedAttackerIndex = characterIndex
-                } else {
-                    print("Ce personnage est éliminé. Veuillez en choisir un autre:")
+            
+            if let magus = attacker as? Magus, canHealCharacter {
+                print("\(attacker.name) est un Magus. Voulez-vous soigner un combattant de votre équipe? (o/n)")
+                
+                if let input = readLine(), input.lowercased() == "o" {
+                    var characterToHeal: Character
+                    repeat {
+                        print("Choisissez un combattant à soigner :")
+                        characterToHeal = getCharacter(from: playerWhoAttack, toHeal: true)
+                        if characterToHeal.lifePoint >= characterToHeal.maxLifePoint {
+                            print("Ce combattant a déjà tous ses points de vie ou est éliminé. Veuillez en choisir un autre:")
+                        }
+                    } while characterToHeal.lifePoint >= characterToHeal.maxLifePoint
+                    
+                    magus.heal(target: characterToHeal)
+                    
+                    swap(&playerWhoAttack, &attacked)
+                    continue
                 }
-            } else {
-                print("Entrez un nombre valide pour sélectionner un personnage:")
             }
-        } while selectedAttackerIndex == nil
-
-        return player.characters[selectedAttackerIndex!]
+            
+            print("Choisissez un combattant à attaquer")
+            let target = getCharacter(from: attacked)
+            
+            // Execution of the attack or treatment //
+            
+            attacker.attack(character: target)
+            
+            swap(&playerWhoAttack, &attacked)
+        }
     }
-
-// Selectionne une cible a attaquer pour un joueur //
     
-    private func selectTarget(for player: Player) -> Character {
-        print("\(player.name), choisissez un personnage à attaquer :")
-        for (index, character) in player.characters.enumerated() {
-            if character.lifePoint > 0 {
-                print("\(index + 1). \(character.name) - \(character.getDescription())")
+    // MARK: - Show Statistics
+    // displays the final statistics //
+    
+    private func showStatistics() {
+        let winnerIndex = players[0].characters.allSatisfy({ $0.lifePoint <= 0 }) ? 1 : 0
+        print("\nFélicitations, équipe \(winnerIndex + 1) (\(players[winnerIndex].name))! Vous avez gagné la partie!")
+        
+        print("\nStatistiques finales:")
+        print("Nombre de tours effectués : \(turnCounter)")
+        
+        for (index, player) in players.enumerated() {
+            print("\nJoueur \(index + 1): \(player.name)")
+            for character in player.characters {
+                
+                print("\(character.name) - \(character.getDescription())")
             }
         }
+    }
+}
 
-// Selectionne un cible a attaquer //
+// MARK: - Convenience Methods
+
+extension Game {
+    // Select a character depending of the player - toHeal or not //
+    private func getCharacter(from player: Player, toHeal: Bool = false) -> Character {
+        var availableCharacters = player.characters.filter({ $0.lifePoint > 0 })
         
+        if toHeal {
+            availableCharacters = availableCharacters.filter({ $0.lifePoint < $0.maxLifePoint })
+        }
+        
+        for (index, character) in availableCharacters.enumerated() {
+            print("\(index + 1). \(character.name) - \(character.getDescription())")
+        }
         
         var selectedTargetIndex: Int?
         repeat {
-            if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= player.characters.count {
+            if let input = readLine(), let inputNumber = Int(input), inputNumber > 0, inputNumber <= availableCharacters.count {
                 let characterIndex = inputNumber - 1
-                if player.characters[characterIndex].lifePoint > 0 {
-                    selectedTargetIndex = characterIndex
-                } else {
-                    print("Ce personnage est éliminé. Veuillez en choisir un autre:")
-                }
+                selectedTargetIndex = characterIndex
             } else {
-                print("Entrez un nombre valide pour sélectionner un personnage:")
+                print("Entrez un nombre valide pour sélectionner un combattant:")
             }
         } while selectedTargetIndex == nil
-
-        return player.characters[selectedTargetIndex!]
+        
+        return availableCharacters[selectedTargetIndex!]
     }
-    
-// verifie si la partie est terminée //
 
+    // check if the game is over //
+    
     private func isGameOver() -> Bool {
         for player in players {
             if player.characters.allSatisfy({ $0.lifePoint <= 0 }) {
@@ -181,32 +233,5 @@ class Game {
         }
         return false
     }
-
-// Effectue une attaque d'un personnage sur un cible //
-    
-    
-    private func performAttack(attacker: Character, target: Character) {
-        target.lifePoint -= attacker.weapon.damage
-        if target.lifePoint <= 0 {
-            target.lifePoint = 0
-            print("\(attacker.name) a attaqué \(target.name) et lui a infligé \(attacker.weapon.damage) points de dégâts. \(target.name) est éliminé.")
-        } else {
-            print("\(attacker.name) a attaqué \(target.name) et lui a infligé \(attacker.weapon.damage) points de dégâts. Il reste \(target.lifePoint) points de vie à \(target.name).")
-        }
-    }
-    
-// affiche les statistique finales //
-
-    func showStatistics() {
-        print("\nStatistiques finales:")
-        for (index, player) in players.enumerated() {
-            print("\nJoueur \(index + 1): \(player.name)")
-            for character in player.characters {
-                print("\(character.name) - \(character.getDescription())")
-            }
-        }
-
-        let winnerIndex = players[0].characters.allSatisfy({ $0.lifePoint <= 0 }) ? 1 : 0
-        print("\nFélicitations, Joueur \(winnerIndex + 1) (\(players[winnerIndex].name))! Vous avez gagné la partie!")
-    }
 }
+
